@@ -38,6 +38,7 @@ for j in range(9):
     quiz[j] = list(quiz[j])
     solution[j] = list(solution[j])
 
+
 quiz = [[int(float(j)) for j in i] for i in quiz]
 solution = [[int(float(j)) for j in i] for i in solution]
 
@@ -143,7 +144,7 @@ def solve(sudoku):
             return
 
 
-def put_number():
+def put_number(currentValue):
     wait = True
     while wait:
             for event in pygame.event.get():
@@ -191,11 +192,14 @@ def put_number():
                         value = 9
                         wait = False
                         break
-                    if keys[pygame.K_ESCAPE]:
+                    if keys[pygame.K_BACKSPACE]:
                         value = 0
                         wait = False
                         break
-
+                    if keys[pygame.K_ESCAPE]:
+                        value = currentValue
+                        wait = False
+                        break
     return value
 
 run = True
@@ -241,7 +245,6 @@ while run:
 
 
             if solved == True:
-                showSolver = False
                 #Specify box positions
                 yesX1, yesX2 = tileSize * 3, tileSize * 3 + int(tileSize*1.5) - 10
                 yesY1, yesY2 = screenHeight + borderSize * 2 + marginSize, screenHeight + borderSize * 2 + marginSize + int(tileSize*.75)
@@ -267,7 +270,7 @@ while run:
                     sudoku = copy.deepcopy(quiz)
 
                     locked = [[],[],[],[],[],[],[],[],[]]
-                    
+
                     for i in range(9):
                         for j in range(9):
                             if sudoku[i][j] == 0:
@@ -286,7 +289,7 @@ while run:
                         if locked[i][j] == False:
                             pygame.draw.rect(win, (255,255,255), (j*tileSize + borderSize*2, i*tileSize + borderSize*2, tileSize - borderSize*3, tileSize - borderSize*3))
                             pygame.display.update()
-                            val = put_number()
+                            val = put_number(sudoku[i][j])
                             sudoku[i][j] = val
 
                             if possible(i, j, sudoku[i][j]):
@@ -305,6 +308,10 @@ while run:
 
     if num_valid == 81 and num_zero == 0:
         solved = True
+        showSolver = False
+    else:
+        solved = False
+        showSolver = True
 
 
     updateDisplay(sudoku, locked, valid, solved, showSolver)
